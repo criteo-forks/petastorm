@@ -26,7 +26,7 @@ from pyspark.sql.types import StringType, ShortType, LongType, IntegerType, Bool
     FloatType, DecimalType, DateType, TimestampType
 from pyspark.sql.types import StructField, StructType
 from six import string_types
-
+from pyarrow.lib import ListType
 from petastorm.codecs import ScalarCodec
 
 
@@ -234,9 +234,10 @@ class Unischema(object):
         for column_name in arrow_schema.names:
             arrow_field = arrow_schema.field_by_name(column_name)
             field_type = arrow_field.type
-            codec, np_type = _numpy_and_codec_from_arrow_type(field_type)
+            if not isinstance(field_type, ListType):
+                codec, np_type = _numpy_and_codec_from_arrow_type(field_type)
 
-            unischema_fields.append(UnischemaField(column_name, np_type, (), codec, arrow_field.nullable))
+                unischema_fields.append(UnischemaField(column_name, np_type, (), codec, arrow_field.nullable))
         return Unischema('inferred_schema', unischema_fields)
 
 

@@ -28,6 +28,7 @@ from pyspark.sql.types import StructField, StructType
 from six import string_types
 from pyarrow.lib import ListType
 from petastorm.codecs import ScalarCodec
+from petastorm.tf_utils import namedtuple2
 
 
 def _fields_as_tuple(field):
@@ -91,7 +92,7 @@ class _NamedtupleCache(object):
         sorted_names = list(sorted(field_names))
         key = ' '.join([parent_schema_name] + sorted_names)
         if key not in _NamedtupleCache._store:
-            _NamedtupleCache._store[key] = namedtuple('{}_view'.format(parent_schema_name), sorted_names)
+            _NamedtupleCache._store[key] = namedtuple2('{}_view'.format(parent_schema_name), sorted_names)
         return _NamedtupleCache._store[key]
 
 
